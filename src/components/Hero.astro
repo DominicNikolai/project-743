@@ -24,7 +24,10 @@
   import * as THREE from 'three';
   import GUI from 'lil-gui';
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: 'high-performance'
+  });
   document.body.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
@@ -159,13 +162,22 @@
     fragmentShader,
     uniforms: {
       uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uResolution: {
+        value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+      },
       uRotation: { value: new THREE.Matrix3() },
       uFractalScale: { value: params.fractalScale },
       uFadeOuter: { value: params.fadeOuter },
       uFadeInner: { value: params.fadeInner },
       uSmoothing: { value: params.smoothing },
-      uColorPhases: { value: new THREE.Vector4(params.colorPhaseR, params.colorPhaseG, params.colorPhaseB, params.colorPhaseA) }
+      uColorPhases: {
+        value: new THREE.Vector4(
+          params.colorPhaseR,
+          params.colorPhaseG,
+          params.colorPhaseB,
+          params.colorPhaseA
+        )
+      }
     }
   });
 
@@ -176,7 +188,10 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio * params.dpr);
     if (material) {
-      material.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+      material.uniforms.uResolution.value.set(
+        window.innerWidth,
+        window.innerHeight
+      );
     }
   };
 
@@ -228,29 +243,63 @@
   const gui = new GUI({ title: 'Sphere Settings' });
 
   const folderRender = gui.addFolder('Render Settings');
-  folderRender.add(params, 'dpr', 0.1, 2.0, 0.1).name('Pixel Ratio (DPR)').onChange(updateSize);
+  folderRender
+    .add(params, 'dpr', 0.1, 2.0, 0.1)
+    .name('Pixel Ratio (DPR)')
+    .onChange(updateSize);
 
   const folderAnim = gui.addFolder('Animation');
   folderAnim.add(params, 'speed', 0.0, 3.0, 0.01).name('Speed');
   folderAnim.add(params, 'autoRotate').name('Auto Rotate');
-  folderAnim.add(params, 'autoRotateSpeed', -2.0, 2.0, 0.01).name('Auto Rotate Speed');
+  folderAnim
+    .add(params, 'autoRotateSpeed', -2.0, 2.0, 0.01)
+    .name('Auto Rotate Speed');
 
   const folderStruct = gui.addFolder('Fractal Structure');
-  folderStruct.add(params, 'fractalScale', 0.1, 3.0, 0.01).name('Scale').onChange(v => (material.uniforms.uFractalScale.value = v));
-  folderStruct.add(params, 'smoothing', 0.1, 4.0, 0.01).name('Smoothing Factor').onChange(v => (material.uniforms.uSmoothing.value = v));
+  folderStruct
+    .add(params, 'fractalScale', 0.1, 3.0, 0.01)
+    .name('Scale')
+    .onChange(v => (material.uniforms.uFractalScale.value = v));
+  folderStruct
+    .add(params, 'smoothing', 0.1, 4.0, 0.01)
+    .name('Smoothing Factor')
+    .onChange(v => (material.uniforms.uSmoothing.value = v));
 
   const folderBound = gui.addFolder('Sphere Boundary');
-  folderBound.add(params, 'fadeOuter', 1.0, 5.0, 0.01).name('Fade Outer Radius').onChange(v => (material.uniforms.uFadeOuter.value = v));
-  folderBound.add(params, 'fadeInner', 0.5, 4.0, 0.01).name('Fade Inner Radius').onChange(v => (material.uniforms.uFadeInner.value = v));
+  folderBound
+    .add(params, 'fadeOuter', 1.0, 5.0, 0.01)
+    .name('Fade Outer Radius')
+    .onChange(v => (material.uniforms.uFadeOuter.value = v));
+  folderBound
+    .add(params, 'fadeInner', 0.5, 4.0, 0.01)
+    .name('Fade Inner Radius')
+    .onChange(v => (material.uniforms.uFadeInner.value = v));
 
   const folderColors = gui.addFolder('Color Palette (Phases)');
   const updateColors = () => {
-    material.uniforms.uColorPhases.value.set(params.colorPhaseR, params.colorPhaseG, params.colorPhaseB, params.colorPhaseA);
+    material.uniforms.uColorPhases.value.set(
+      params.colorPhaseR,
+      params.colorPhaseG,
+      params.colorPhaseB,
+      params.colorPhaseA
+    );
   };
-  folderColors.add(params, 'colorPhaseR', 0.0, 10.0, 0.1).name('Phase R').onChange(updateColors);
-  folderColors.add(params, 'colorPhaseG', 0.0, 10.0, 0.1).name('Phase G').onChange(updateColors);
-  folderColors.add(params, 'colorPhaseB', 0.0, 10.0, 0.1).name('Phase B').onChange(updateColors);
-  folderColors.add(params, 'colorPhaseA', 0.0, 10.0, 0.1).name('Phase A').onChange(updateColors);
+  folderColors
+    .add(params, 'colorPhaseR', 0.0, 10.0, 0.1)
+    .name('Phase R')
+    .onChange(updateColors);
+  folderColors
+    .add(params, 'colorPhaseG', 0.0, 10.0, 0.1)
+    .name('Phase G')
+    .onChange(updateColors);
+  folderColors
+    .add(params, 'colorPhaseB', 0.0, 10.0, 0.1)
+    .name('Phase B')
+    .onChange(updateColors);
+  folderColors
+    .add(params, 'colorPhaseA', 0.0, 10.0, 0.1)
+    .name('Phase A')
+    .onChange(updateColors);
 
   gui.close();
 
@@ -270,7 +319,10 @@
       targetRotationY += delta * params.autoRotateSpeed;
     }
 
-    targetRotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, targetRotationX));
+    targetRotationX = Math.max(
+      -Math.PI / 2,
+      Math.min(Math.PI / 2, targetRotationX)
+    );
 
     currentRotationX += (targetRotationX - currentRotationX) * 0.08;
     currentRotationY += (targetRotationY - currentRotationY) * 0.08;
